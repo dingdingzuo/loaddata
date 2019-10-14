@@ -1,0 +1,35 @@
+import requests
+from bs4 import BeautifulSoup
+import re
+
+
+# 获取网页内容
+def get_html(url):
+    page = requests.get(url)
+    # print(page.content)
+    return page.content
+
+def soup_parse(html):#下载春秋战国人名
+    file_path = r'E:\chunqiu names.txt'
+    file = open(file_path, 'a', encoding='utf-8')
+    soup = BeautifulSoup(html, 'html.parser')
+    body = soup.body
+    names = body.find('div', attrs={'class':'strasegy_name'})
+    datas = names.find('ul')
+    for a in datas('a'):
+        name=a.get_text('a')
+        file.write(name + ' 100 '+'nr'+'\n')
+    file.close()
+    print('Success dataload names!')
+def soup_parse1():#下载《东周列国志》
+    down = 'https://down.bxwx.me/modules/article/txtarticle.php?id=338186'
+    f = requests.get(down)
+    with open('白话版.txt', 'wb') as fw:
+        fw.write(f.content)
+    print('Success dataload novel!')
+
+if __name__ == '__main__':
+    url = 'http://www.qulishi.com/renwu/list_chunqiu.htm'
+    html = get_html(url)
+    soup_parse(html)
+    soup_parse1()
